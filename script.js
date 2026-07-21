@@ -128,10 +128,25 @@ document.addEventListener('DOMContentLoaded', function () {
     els.forEach(function (el) { io.observe(el); });
   })();
 
-  /* ===== Avviso orari: popup all'ingresso (punto 8) ===== */
+  /* ===== Avviso orari: popup all'ingresso (punto 8) =====
+     Esce a ogni ingresso nel sito. Niente localStorage: prima la chiusura
+     salvava un flag permanente e il popup non tornava mai più.
+     Unica eccezione: la navigazione interna fra le pagine, altrimenti
+     ricomparirebbe a ogni clic del menu. */
   (function () {
-    var KEY = 'hoursNoticeDismissed_v2';
-    if (localStorage.getItem(KEY) === '1') return;
+    var daAltraPagina = false;
+    try {
+      daAltraPagina = !!document.referrer &&
+                      new URL(document.referrer).host === location.host;
+    } catch (e) { daAltraPagina = false; }
+
+    /* Un ricaricamento (F5) o un back/forward valgono come nuovo ingresso:
+       si sopprime solo il clic da un'altra pagina del sito. */
+    var nav = (performance.getEntriesByType &&
+               performance.getEntriesByType('navigation')[0]) || null;
+    var ricaricata = nav ? (nav.type === 'reload' || nav.type === 'back_forward') : false;
+
+    if (daAltraPagina && !ricaricata) return;
     var overlay = document.createElement('div');
     overlay.className = 'hours-modal-overlay';
     overlay.innerHTML =
@@ -154,7 +169,7 @@ document.addEventListener('DOMContentLoaded', function () {
       '</div>';
     function close() {
       overlay.classList.remove('open');
-      localStorage.setItem(KEY, '1');
+      /* nessun flag salvato: al prossimo ingresso l'avviso torna a comparire */
       setTimeout(function () { if (overlay.parentNode) overlay.remove(); }, 300);
     }
     document.body.appendChild(overlay);
