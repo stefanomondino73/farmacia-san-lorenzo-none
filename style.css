@@ -112,7 +112,9 @@ p { margin-bottom: 1em; color: var(--text); text-wrap: pretty; }
 .pb50 { padding-bottom: 50px; } .pb60 { padding-bottom: 60px; }
 
 /* ===== Header ===== */
-header { position: sticky; top: 0; z-index: 1000; background: rgba(255,255,255,.97); backdrop-filter: blur(8px); box-shadow: var(--shadow); }
+/* Niente backdrop-filter: su barra sticky costa un blur a tutta larghezza a ogni frame
+   di scroll. Con lo sfondo già opaco al 97% l'effetto era invisibile: sfondo pieno. */
+header { position: sticky; top: 0; z-index: 1000; background: #fff; box-shadow: var(--shadow); }
 .navbar-inner { padding: .8rem 0; }
 .navbar-inner .container { display: flex; align-items: center; justify-content: space-between; gap: 1rem; }
 .nav-panel { display: none; }
@@ -253,7 +255,7 @@ header { position: sticky; top: 0; z-index: 1000; background: rgba(255,255,255,.
   background-repeat: repeat; background-size: 300px 200px;
   filter: drop-shadow(0 0 3px rgba(255,255,255,.4));
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='200'%3E%3Cdefs%3E%3Cpath id='s' d='M0,-9 L1.95,-4.06 L7.04,-5.61 L4.39,-1 L8.77,2 L3.52,2.81 L3.91,8.11 L0,4.5 L-3.91,8.11 L-3.52,2.81 L-8.77,2 L-4.39,-1 L-7.04,-5.61 L-1.95,-4.06 Z'/%3E%3C/defs%3E%3Cg fill='%23ffffff'%3E%3Cuse href='%23s' transform='translate(58 48) scale(1.4)' opacity='0.9'/%3E%3Cuse href='%23s' transform='translate(232 40)' opacity='0.72'/%3E%3Cuse href='%23s' transform='translate(150 122) scale(1.2)' opacity='0.82'/%3E%3Cuse href='%23s' transform='translate(284 156) scale(0.8)' opacity='0.6'/%3E%3Cuse href='%23s' transform='translate(24 156) scale(0.9)' opacity='0.64'/%3E%3C/g%3E%3Cg fill='%23FFC107'%3E%3Cuse href='%23s' transform='translate(256 106)' opacity='0.92'/%3E%3C/g%3E%3C/svg%3E");
-  animation: partDriftA 55s linear infinite;
+  /* deriva disattivata: animava background-position = ridisegno del livello a ogni frame */
 }
 .fraseadeffetto2::after {
   content: ''; position: absolute; inset: -25%; z-index: 1; pointer-events: none; opacity: .85;
@@ -265,7 +267,7 @@ header { position: sticky; top: 0; z-index: 1000; background: rgba(255,255,255,.
     radial-gradient(1.2px 1.2px at 62px 122px, rgba(255,255,255,.36), transparent 60%),
     radial-gradient(1.5px 1.5px at 18px 100px, rgba(255,255,255,.46), transparent 60%),
     radial-gradient(1.3px 1.3px at 140px 132px, rgba(255,255,255,.4), transparent 60%);
-  animation: partDriftB 40s linear infinite, partTwinkle 7s ease-in-out infinite;
+  animation: partTwinkle 7s ease-in-out infinite;   /* solo opacità: composita, non ridisegna */
 }
 @keyframes partDriftA { to { background-position: 300px 200px; } }
 @keyframes partDriftB { to { background-position: -180px 150px; } }
@@ -304,7 +306,7 @@ header { position: sticky; top: 0; z-index: 1000; background: rgba(255,255,255,.
   content: ''; position: absolute; inset: 0; z-index: 0; pointer-events: none;
   background-repeat: repeat; background-size: 340px 240px;
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='340' height='240'%3E%3Cg stroke='%237986CB' stroke-opacity='0.88' stroke-width='1.9' fill='none'%3E%3Cpath d='M40,50 L120,90 M40,50 L185,45 M120,90 L70,175 M120,90 L205,135 M185,45 L205,135 M185,45 L275,75 M205,135 L150,215 M205,135 L305,165 M275,75 L305,165 M305,165 L250,220 M305,165 L330,115 M150,215 L250,220 M40,50 L20,120 M20,120 L70,175 M275,75 L330,115'/%3E%3C/g%3E%3Cg fill='%237986CB'%3E%3Ccircle cx='40' cy='50' r='3.6' opacity='0.95'/%3E%3Ccircle cx='120' cy='90' r='5.2' opacity='1'/%3E%3Ccircle cx='70' cy='175' r='3.6' opacity='0.92'/%3E%3Ccircle cx='185' cy='45' r='3.6' opacity='0.95'/%3E%3Ccircle cx='205' cy='135' r='5.2' opacity='1'/%3E%3Ccircle cx='150' cy='215' r='3.6' opacity='0.92'/%3E%3Ccircle cx='275' cy='75' r='3.6' opacity='0.95'/%3E%3Ccircle cx='305' cy='165' r='5.2' opacity='1'/%3E%3Ccircle cx='250' cy='220' r='3.6' opacity='0.92'/%3E%3Ccircle cx='330' cy='115' r='3.6' opacity='0.95'/%3E%3Ccircle cx='20' cy='120' r='3.6' opacity='0.92'/%3E%3C/g%3E%3C/svg%3E");
-  animation: molDrift 90s linear infinite, molBreath 11s ease-in-out infinite;
+  animation: molBreath 11s ease-in-out infinite;   /* solo opacità: composita, non ridisegna */
 }
 #reparti::after, #servizi-page::after {
   content: ''; position: absolute; inset: 0; z-index: 0; pointer-events: none;
@@ -807,7 +809,7 @@ small { font-size: .75em; color: var(--text-light); }
   max-width:none; margin:0 auto; line-height:1.2;
   font-size: clamp(1.3rem, 1rem + 1.1vw, 1.8rem);        /* proporzionata: sotto i titoli */
 }
-.frase-gradini .fg-riga{ display:block; margin-bottom: clamp(.7rem, 1.8vw, 1.3rem); }
+.frase-gradini .fg-riga{ display:block; margin-bottom: clamp(1.1rem, 1.8vw, 1.3rem); }
 .frase-gradini .fg-riga:last-child{ margin-bottom:0; }
 .frase-gradini .fg-riga--sx{ text-align:left; }
 .frase-gradini .fg-riga--centro{ text-align:center; }
@@ -832,14 +834,15 @@ small { font-size: .75em; color: var(--text-light); }
   .js .frase-gradini > .container.is-visible .fg-riga--dx{ transition-delay:.56s; }
 }
 /* Avvicino "Benvenuti" alla frase sopra: meno spazio sotto la frase e sopra la sezione */
-.fraseadeffetto.frase-gradini{ padding-bottom: clamp(.3rem, .8vw, .7rem); overflow-x: clip; }
+.fraseadeffetto.frase-gradini{ padding-bottom: clamp(.7rem, .8vw, .7rem); overflow-x: clip; }
 .fraseadeffetto.frase-sentiero{ overflow-x: clip; }
-#chisiamo{ padding-top: clamp(.5rem, 1.4vw, 1.1rem); padding-bottom: clamp(.4rem, 1.2vw, 1rem); }
+/* minimi alzati: su mobile il clamp cadeva sul minimo e le sezioni si schiacciavano */
+#chisiamo{ padding-top: clamp(1rem, 1.4vw, 1.1rem); padding-bottom: clamp(.9rem, 1.2vw, 1rem); }
 
 /* ===== Home — frase "Qui potrete...": sentiero discendente (V2) =====
    Le righe scendono verso destra con passo crescente, come un percorso.
    Avvicinata alla sezione sopra; ingresso animato riga per riga allo scroll. */
-.fraseadeffetto.frase-sentiero{ padding-top: clamp(.4rem, 1vw, .9rem); }
+.fraseadeffetto.frase-sentiero{ padding-top: clamp(.85rem, 1vw, .9rem); }
 .frase-sentiero > .container{ max-width: 1240px; }
 .fraseadeffetto.frase-sentiero h1{
   max-width:none; margin:0; text-align:left; text-wrap:initial;
@@ -1199,10 +1202,12 @@ small { font-size: .75em; color: var(--text-light); }
    ============================================================ */
 @property --cs-angle { syntax: '<angle>'; inherits: false; initial-value: 0deg; }
 
-/* Grana leggera su tutta la pagina (riempie il "piatto") */
+/* RIMOSSA la grana fissa a tutto schermo: era `position:fixed` + `mix-blend-mode:multiply`,
+   costringeva il browser a rifondere l'intera finestra a ogni frame di scroll
+   (causa principale dello scroll lento/scattoso). Resa inerte, non eliminata,
+   per non spostare nulla d'altro nel foglio di stile. */
 .page-chisiamo::after{
-  content:''; position:fixed; inset:0; z-index:1; pointer-events:none; opacity:.035; mix-blend-mode:multiply;
-  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='180' height='180' filter='url(%23n)'/%3E%3C/svg%3E");
+  content:none;
 }
 
 /* Alterno gli sfondi delle sezioni bianche (:has) — niente più "tutto bianco" */
@@ -1395,4 +1400,12 @@ small { font-size: .75em; color: var(--text-light); }
   font-size:2.5rem; line-height:0; vertical-align:-.3em; margin-right:.14em; font-style:normal;
 }
 @media (max-width:900px){ .team-43{ grid-template-columns:repeat(4,1fr); } }
-@media (max-width:560px){ .team-43{ grid-template-columns:repeat(2,1fr); } }
+@media (max-width:560px){
+  .team-43{ grid-template-columns:repeat(2,1fr); }
+  /* senza questo ogni cella terrebbe "span 2" e occuperebbe entrambe le colonne:
+     la scacchiera diventava una pila di blocchi a tutta larghezza */
+  .team-43 .tm, .team-43 .tm-frase{ grid-column: span 1; }
+  .team-43 > *{ min-height:170px; }
+  .tm img{ width:82px; height:82px; }
+  .tm-frase{ padding:1.1rem 1.2rem; font-size:.9rem; }
+}

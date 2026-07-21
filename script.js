@@ -128,18 +128,51 @@ document.addEventListener('DOMContentLoaded', function () {
     els.forEach(function (el) { io.observe(el); });
   })();
 
-  /* ===== Hours notice banner ===== */
-  const hoursBanner = document.getElementById('hours-banner');
-  const hoursBannerClose = document.getElementById('hours-banner-close');
-  if (hoursBanner && hoursBannerClose) {
-    if (localStorage.getItem('hoursBannerDismissed') === '1') {
-      hoursBanner.classList.add('hidden');
+  /* ===== Avviso orari: popup all'ingresso (punto 8) ===== */
+  (function () {
+    var KEY = 'hoursNoticeDismissed_v2';
+    if (localStorage.getItem(KEY) === '1') return;
+    var overlay = document.createElement('div');
+    overlay.className = 'hours-modal-overlay';
+    overlay.innerHTML =
+      '<div class="hours-modal" role="dialog" aria-modal="true" aria-labelledby="hm-title">' +
+        '<button class="hours-modal-close" aria-label="Chiudi avviso">&times;</button>' +
+        '<div class="hours-modal-head">' +
+          '<span class="hours-modal-badge" aria-hidden="true">' +
+            '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="1.7"/><path d="M12 7v5.2l3.4 2" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>' +
+          '</span>' +
+          '<p class="hours-modal-eyebrow">Avviso alla clientela</p>' +
+          '<h2 id="hm-title">Da settembre cambiano gli orari</h2>' +
+        '</div>' +
+        '<div class="hours-modal-body">' +
+          '<ul class="hours-modal-list">' +
+            '<li><span class="hm-day">Luned&igrave;</span><span class="hm-time">08:30&ndash;12:30 &middot; 15:30&ndash;19:30</span></li>' +
+            '<li><span class="hm-day">Sabato</span><span class="hm-time">08:30&ndash;12:30</span></li>' +
+          '</ul>' +
+          '<button class="btn hours-modal-ok">Ho capito</button>' +
+        '</div>' +
+      '</div>';
+    function close() {
+      overlay.classList.remove('open');
+      localStorage.setItem(KEY, '1');
+      setTimeout(function () { if (overlay.parentNode) overlay.remove(); }, 300);
     }
-    hoursBannerClose.addEventListener('click', function () {
-      hoursBanner.classList.add('hidden');
-      localStorage.setItem('hoursBannerDismissed', '1');
+    document.body.appendChild(overlay);
+    void overlay.offsetWidth; // forza il reflow: la transizione parte in modo affidabile
+    overlay.classList.add('open');
+    overlay.addEventListener('click', function (e) { if (e.target === overlay) close(); });
+    overlay.querySelector('.hours-modal-close').addEventListener('click', close);
+    overlay.querySelector('.hours-modal-ok').addEventListener('click', close);
+    document.addEventListener('keydown', function (e) { if (e.key === 'Escape') close(); });
+  })();
+
+  /* ===== Evidenzia il giorno corrente negli orari (giallo) ===== */
+  (function () {
+    var today = new Date().getDay(); // 0 = Domenica ... 6 = Sabato
+    document.querySelectorAll('[data-day]').forEach(function (el) {
+      if (parseInt(el.getAttribute('data-day'), 10) === today) el.classList.add('is-today');
     });
-  }
+  })();
 
   /* ===== Mobile navbar toggle ===== */
   const toggle = document.querySelector('.navbar-toggle');
