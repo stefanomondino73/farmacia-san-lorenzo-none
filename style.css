@@ -156,10 +156,13 @@ header { position: sticky; top: 0; z-index: 1000; background: #fff; box-shadow: 
 
   /* Pannello blu diagonale dietro il menu (soluzione "C"), a tutto bordo destro */
   header { overflow: hidden; }   /* sticky = già containing block per il pannello assoluto */
+  /* Il menu è ancorato al contenitore centrato (max 1140px), il pannello al bordo
+     destro della finestra: su schermi larghi la prima voce ("Home") finiva fuori dal blu.
+     Larghezza minima in px calcolata sul menu, così lo copre a qualsiasi risoluzione. */
   .nav-panel {
     display: block; position: absolute; top: 0; bottom: 0; right: 0;
-    width: 42%; background: var(--primary); z-index: 1;
-    clip-path: polygon(14% 0, 100% 0, 100% 100%, 0 100%);
+    width: max(52%, 620px); background: var(--primary); z-index: 1;
+    clip-path: polygon(11% 0, 100% 0, 100% 100%, 0 100%);
   }
   .navbar-brand, .navbar-collapse { position: relative; z-index: 2; }
   .navbar-nav li a,
@@ -246,6 +249,18 @@ header { position: sticky; top: 0; z-index: 1000; background: #fff; box-shadow: 
 /* Foto agganciata in diagonale sotto l'hero (niente stacco netto) */
 .hero-photo.hero-photo--diag{ max-width:none; margin: -34px auto 0; clip-path: polygon(0 34px, 100% 0, 100% 100%, 0 100%); }
 .hero-photo.hero-photo--diag img{ width:100%; max-width:1100px; margin:0 auto; }
+
+/* Su desktop l'inclinazione a 64px si legge poco sulla larghezza piena:
+   la accentuo. Mobile invariato (lì il cliente la trova già giusta). */
+@media (min-width: 992px){
+  #home-content-container.hero-b{
+    clip-path: polygon(0 0, 100% 0, 100% calc(100% - 130px), 0 100%);
+  }
+  .hero-photo.hero-photo--diag{
+    margin-top: -68px;
+    clip-path: polygon(0 68px, 100% 0, 100% 100%, 0 100%);
+  }
+}
 
 /* ===== Bande blu: sistema particellare (stelle del marchio + pulviscolo) ===== */
 .fraseadeffetto2 { overflow: hidden; }
@@ -353,11 +368,8 @@ header { position: sticky; top: 0; z-index: 1000; background: #fff; box-shadow: 
 .fraseadeffetto h1 { font-size: clamp(1.3rem, 1.05rem + 1.1vw, 1.7rem); color: var(--primary-dark); }
 .fraseadeffetto2 { background: var(--primary); color: #fff; position: relative; }
 .fraseadeffetto2 h1 { color: #fff; font-size: clamp(1.25rem, 1rem + 1vw, 1.6rem); }
-.fraseadeffetto2 .container::before {
-  content: '\201C'; display: block; font-family: var(--font-head);
-  font-style: normal; font-size: 3.5rem; line-height: .6; color: var(--accent-yellow);
-  margin-bottom: .5rem;
-}
+/* virgolette gialle rimosse su richiesta del cliente */
+.fraseadeffetto2 .container::before { content: none; }
 .fraseadeffetto3 { background: var(--primary-light); }
 .fraseadeffetto3 h2 { color: var(--primary-dark); font-size: clamp(1.25rem, 1rem + 1vw, 1.6rem); }
 .frasesottoteam { background: var(--bg-alt); }
@@ -435,10 +447,8 @@ header { position: sticky; top: 0; z-index: 1000; background: #fff; box-shadow: 
 }
 .valori-chiusura{ color:var(--text-light); font-size:1.1rem; line-height:1.55; max-width:34ch; margin:0; }
 .mortar-wrap { position: relative; max-width: 360px; margin: 0 auto; }
-.mortar-wrap::before {
-  content: ''; position: absolute; inset: 0; z-index: 0;
-  background: url("assets/img/pennellata-gialla.svg") center/contain no-repeat;
-}
+/* scia gialla dietro le stelle del logo rimossa su richiesta del cliente */
+.mortar-wrap::before { content: none; }
 .mortar-wrap img { position: relative; z-index: 1; width: 100%; height: auto; display: block; }
 @media (max-width: 820px) {
   .benvenuti { grid-template-columns: 1fr; gap: 2.5rem; text-align: center; }
@@ -450,6 +460,25 @@ header { position: sticky; top: 0; z-index: 1000; background: #fff; box-shadow: 
 .page-hero { padding: clamp(2.5rem,6vw,4.5rem) 0 clamp(1rem,3vw,2rem); text-align: center; }
 .page-hero h1 { margin-bottom: .5rem; }
 .page-hero .lead-text { max-width: 54ch; }
+
+/* Servizi: su desktop la rete di sfondo esce dal contenitore e va a tutta larghezza
+   (come in home). Il contenitore normalmente la tagliava a 1240px.
+   `overflow-x: clip` sul body evita la barra di scorrimento orizzontale;
+   `clip` (non `hidden`) non crea un contenitore di scroll, quindi l'header sticky continua a funzionare. */
+@media (min-width: 992px){
+  /* Il contenitore diventa largo quanto la pagina, così la rete di sfondo (che sta
+     nel suo ::before con inset:0) copre tutta la larghezza come in home.
+     Il contenuto resta incolonnato a 1240px grazie al padding calcolato.
+     Selettore piu' specifico perche' piu' avanti nel foglio c'e' un altro
+     `#servizi-page { max-width:1240px; overflow-x:clip }`. */
+  body #servizi-page{
+    max-width: none;
+    padding-inline: 1.25rem;
+    overflow: hidden;
+  }
+  /* il contenuto resta incolonnato e centrato: e' la card a limitarsi, non il contenitore */
+  body #servizi-page > .servizio{ max-width: 1240px; margin-inline: auto; }
+}
 
 /* ===== Servizi — testata "masthead" editoriale =====
    Titolo grande e asimmetrico in pervinca, filo verticale pervinca sul bordo,
@@ -509,7 +538,7 @@ header { position: sticky; top: 0; z-index: 1000; background: #fff; box-shadow: 
   font-size: clamp(1.5rem, 1.1rem + 2vw, 2.5rem); line-height: 1.25;
   max-width: 22ch; margin: 0 auto; letter-spacing: -.01em;
 }
-.pullquote p::before { content: '\201C'; color: var(--accent-yellow); font-size: 1.4em; line-height: 0; vertical-align: -.35em; margin-right: .08em; }
+.pullquote p::before { content: none; }   /* virgolette gialle rimosse su richiesta del cliente */
 
 /* Approccio + valori */
 .approccio-intro { max-width: 640px; margin: 0 auto 2.5rem; text-align: center; }
@@ -1279,10 +1308,7 @@ small { font-size: .75em; color: var(--text-light); }
   border:1px solid color-mix(in srgb, var(--primary) 12%, var(--border)); border-radius:22px;
   padding:2.2rem 2.4rem; box-shadow:var(--shadow-sm); position:relative;
 }
-.page-chisiamo .team-frase::before{
-  content:'\201C'; position:absolute; top:0; left:1rem; font-family:var(--font-head); font-size:4.2rem; line-height:1;
-  color:var(--accent-yellow); opacity:.9;
-}
+.page-chisiamo .team-frase::before{ content:none; }   /* virgolette gialle rimosse */
 
 /* ===== Chi Siamo — sezione "block": colore pieno a tutta larghezza + pannello bianco laterale ===== */
 .page-chisiamo .page-hero.ph-blocks{
@@ -1312,7 +1338,7 @@ small { font-size: .75em; color: var(--text-light); }
   background:#fff; padding:1.7rem 1.9rem;
   display:flex; flex-direction:column; justify-content:center;
 }
-.chk-cell--teal{ background: var(--teal); }
+.chk-cell--teal{ background: var(--accent-yellow); }   /* era teal: sostituito col giallo della farmacia */
 .chk-cell--blue{ background: var(--primary); }
 .chk-cell--txt h3{ color: var(--primary-dark); font-size:1.2rem; margin-bottom:.5rem; }
 .chk-cell--txt p{ color: var(--primary-dark); font-size:.96rem; line-height:1.58; margin:0; }
@@ -1335,7 +1361,7 @@ small { font-size: .75em; color: var(--text-light); }
    Testi, icone e accenti (blu, giallo) restano invariati.
    ============================================================ */
 /* 1. testata: teal pieno */
-.page-chisiamo .page-hero.ph-blocks{ background: var(--teal); }
+.page-chisiamo .page-hero.ph-blocks{ background: var(--accent-yellow); }   /* era teal */
 
 /* 2. storia: scacchiera 2×2 (vedi blocco sopra) */
 
@@ -1346,10 +1372,10 @@ small { font-size: .75em; color: var(--text-light); }
 /* striscia blu piena: divide la citazione da "Il nostro approccio" */
 .striscia-blu{ height:64px; background: var(--primary); }
 
-/* 4. valori: spezzone orizzontale — intro su bianco, card su fascia teal */
+/* 4. valori: spezzone orizzontale — intro su bianco, card su fascia gialla */
 .page-chisiamo section:has(.valori){ background:#fff; }
 .page-chisiamo .valori-band{
-  background: var(--teal);
+  background: var(--accent-yellow);   /* era teal */
   padding: clamp(2.2rem,4vw,3.4rem) 0;
   margin-top: clamp(1.6rem,3vw,2.4rem);
 }
@@ -1388,17 +1414,16 @@ small { font-size: .75em; color: var(--text-light); }
 .tm--bianca img{ border-color: var(--primary-tint); }
 .tm--blu{ background: var(--primary); }
 .tm--blu b{ color:#fff; }
-.tm--teal{ background: var(--teal); }
-.tm--teal b{ color:#fff; }
+/* era teal: ora giallo. Il bianco sul giallo sarebbe illeggibile -> testo blu scuro */
+.tm--teal{ background: var(--accent-yellow); }
+.tm--teal b{ color: var(--primary-darker); }
+.tm-frase.tm--teal{ color: var(--primary-darker); }
 .tm-frase{
   grid-column:span 2; margin:0; padding:1.6rem 1.7rem;
   display:flex; align-items:center;
   font-style:italic; font-size:.97rem; line-height:1.55; color:#fff;
 }
-.tm-frase::before{
-  content:'\201C'; color: var(--accent-yellow); font-family:var(--font-head);
-  font-size:2.5rem; line-height:0; vertical-align:-.3em; margin-right:.14em; font-style:normal;
-}
+.tm-frase::before{ content:none; }   /* virgolette gialle rimosse */
 @media (max-width:900px){ .team-43{ grid-template-columns:repeat(4,1fr); } }
 @media (max-width:560px){
   .team-43{ grid-template-columns:repeat(2,1fr); }
